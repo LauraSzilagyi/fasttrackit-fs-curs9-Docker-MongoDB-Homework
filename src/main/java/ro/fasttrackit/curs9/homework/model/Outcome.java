@@ -1,4 +1,4 @@
-package ro.fasttrackit.curs9.homework.enums;
+package ro.fasttrackit.curs9.homework.model;
 
 public enum Outcome {
     NOSTARTED,

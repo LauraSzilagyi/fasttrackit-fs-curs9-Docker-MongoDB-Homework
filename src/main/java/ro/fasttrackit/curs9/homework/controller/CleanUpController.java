@@ -16,11 +16,11 @@ public class CleanUpController {
     private final CleanUpService service;
 
     @GetMapping
-    List<CleanUp> getByRoom(@PathVariable String roomId) {
+    List<CleanUp> getCleanUpsByRoomId(@PathVariable String roomId) {
         return service.getCleanUpsByRoom(roomId);
     }
 
-    @PutMapping
+    @PostMapping
     CleanUp addNewCleanUpToRoom(@PathVariable String roomId, @RequestBody CleanUpModel model) {
         return service.addNewCleanUpToRoom(roomId, model);
     }
@@ -30,9 +30,8 @@ public class CleanUpController {
         return service.updateCleanUp(roomId, jsonPatch);
     }
 
-    @DeleteMapping("{id}")
-    CleanUp deleteCleanUp(@PathVariable String roomId, @PathVariable String id) {
-        return service.deleteCleanUp(roomId, id).orElse(null);
+    @DeleteMapping("{cleanUpId}")
+    CleanUp deleteCleanUp(@PathVariable String roomId, @PathVariable String cleanUpId) {
+        return service.deleteCleanUp(roomId, cleanUpId).orElse(null);
     }
-
 }

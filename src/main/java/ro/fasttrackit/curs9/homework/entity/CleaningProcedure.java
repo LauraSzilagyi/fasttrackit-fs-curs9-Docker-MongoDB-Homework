@@ -1,6 +1,6 @@
 package ro.fasttrackit.curs9.homework.entity;
 
-import ro.fasttrackit.curs9.homework.enums.Outcome;
+import ro.fasttrackit.curs9.homework.model.Outcome;
 
 public record CleaningProcedure(
         String name,

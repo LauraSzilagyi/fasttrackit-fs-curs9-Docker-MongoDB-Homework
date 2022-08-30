@@ -8,8 +8,10 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.fasttrackit.curs9.homework.entity.CleanUp;
+import ro.fasttrackit.curs9.homework.entity.Room;
 import ro.fasttrackit.curs9.homework.exceptions.EntityNotFoundException;
 import ro.fasttrackit.curs9.homework.exceptions.InvalidCleanUpModelException;
+import ro.fasttrackit.curs9.homework.exceptions.JsonPatchCannotBeAppliedException;
 import ro.fasttrackit.curs9.homework.model.CleanUpModel;
 import ro.fasttrackit.curs9.homework.repository.CleanUpRepository;
 import ro.fasttrackit.curs9.homework.repository.RoomRepository;
@@ -32,8 +34,10 @@ public class CleanUpService {
     }
 
     private void verifyIfRoomExists(String roomId) {
-        roomRepository.findById(roomId)
-                .orElseThrow(() -> new EntityNotFoundException(roomId));
+        Optional<Room> roomEntity = roomRepository.findById(roomId);
+        if (roomEntity.isEmpty()) {
+            throw new EntityNotFoundException(roomId);
+        }
     }
 
     public CleanUp addNewCleanUpToRoom(String roomId, CleanUpModel model) {
@@ -72,15 +76,8 @@ public class CleanUpService {
             CleanUp[] cleanUps = jsonMapper.treeToValue(patchedJson, CleanUp[].class);
             return Arrays.asList(cleanUps);
         } catch (JsonProcessingException | JsonPatchException e) {
-            throw new RuntimeException(e);
+            throw new JsonPatchCannotBeAppliedException(e);
         }
-    }
-
-    public List<CleanUp> deleteAll(String roomId) {
-        verifyIfRoomExists(roomId);
-        List<CleanUp> cleanUps = repository.findAllByRoomId(roomId);
-        repository.deleteAll(cleanUps);
-        return cleanUps;
     }
 
     public Optional<CleanUp> deleteCleanUp(String roomId, String id) {

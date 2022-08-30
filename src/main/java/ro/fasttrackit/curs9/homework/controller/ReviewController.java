@@ -20,7 +20,7 @@ public class ReviewController {
         return service.getReviewsByRoom(roomId);
     }
 
-    @PutMapping
+    @PostMapping
     Review addNewReview(@PathVariable String roomId, @RequestBody ReviewModel model) {
         return service.addNewReview(roomId, model);
     }

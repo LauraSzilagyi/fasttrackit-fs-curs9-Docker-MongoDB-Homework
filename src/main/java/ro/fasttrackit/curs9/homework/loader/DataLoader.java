@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.util.UUID.randomUUID;
-import static ro.fasttrackit.curs9.homework.enums.Outcome.*;
+import static ro.fasttrackit.curs9.homework.model.Outcome.*;
 
 @Component
 @RequiredArgsConstructor

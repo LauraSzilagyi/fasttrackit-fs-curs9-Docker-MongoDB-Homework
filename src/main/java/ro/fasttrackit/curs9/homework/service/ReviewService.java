@@ -8,8 +8,10 @@ import com.github.fge.jsonpatch.JsonPatchException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.fasttrackit.curs9.homework.entity.Review;
+import ro.fasttrackit.curs9.homework.entity.Room;
 import ro.fasttrackit.curs9.homework.exceptions.EntityNotFoundException;
 import ro.fasttrackit.curs9.homework.exceptions.InvalidReviewException;
+import ro.fasttrackit.curs9.homework.exceptions.JsonPatchCannotBeAppliedException;
 import ro.fasttrackit.curs9.homework.model.ReviewModel;
 import ro.fasttrackit.curs9.homework.repository.ReviewRepository;
 import ro.fasttrackit.curs9.homework.repository.RoomRepository;
@@ -32,8 +34,10 @@ public class ReviewService {
     }
 
     private void verifyIfRoomExists(String roomId) {
-        roomRepository.findById(roomId)
-                .orElseThrow(() -> new EntityNotFoundException(roomId));
+        Optional<Room> roomEntity = roomRepository.findById(roomId);
+        if (roomEntity.isEmpty()) {
+            throw new EntityNotFoundException(roomId);
+        }
     }
 
     public Review addNewReview(String roomId, ReviewModel model) {
@@ -41,7 +45,7 @@ public class ReviewService {
         validateModel(model);
         Review review = Review.builder()
                 .id(randomUUID().toString())
-                .mesaj(model.mesaj())
+                .message(model.message())
                 .rating(model.rating())
                 .turist(model.turist())
                 .roomId(roomId)
@@ -58,8 +62,8 @@ public class ReviewService {
     public List<Review> updateReview(String roomId, JsonPatch jsonPatch) {
         verifyIfRoomExists(roomId);
         List<Review> reviews = repository.findAllByRoomId(roomId);
-        List<Review> pachedReviews = applyPatch(reviews, jsonPatch);
-        return repository.saveAll(pachedReviews);
+        List<Review> patchedReviews = applyPatch(reviews, jsonPatch);
+        return repository.saveAll(patchedReviews);
     }
 
     private List<Review> applyPatch(List<Review> dbEntity, JsonPatch jsonPatch) {
@@ -71,7 +75,7 @@ public class ReviewService {
             Review[] reviews = jsonMapper.treeToValue(patchedJson, Review[].class);
             return Arrays.asList(reviews);
         } catch (JsonProcessingException | JsonPatchException e) {
-            throw new RuntimeException(e);
+            throw new JsonPatchCannotBeAppliedException(e);
         }
     }
 

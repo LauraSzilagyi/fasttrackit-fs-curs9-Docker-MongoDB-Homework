@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public record Review(
         @Id
         String id,
-        String mesaj,
+        String message,
         Integer rating,
         String turist,
         String roomId) {

@@ -20,7 +20,7 @@ import static org.springframework.data.support.PageableExecutionUtils.getPage;
 @RequiredArgsConstructor
 public class RoomDao {
 
-    private final MongoTemplate mongo;
+    private final MongoTemplate mongoTemplate;
 
     public Page<Room> findBy(RoomFilter filters, Pageable pageable) {
         Criteria criteria = new Criteria();
@@ -29,15 +29,15 @@ public class RoomDao {
                 .ifPresent(hotelName -> criteria.and("hotelName").is(hotelName));
         ofNullable(filters.number())
                 .ifPresent(number -> criteria.and("number").is(number));
-        ofNullable(filters.etaj())
-                .ifPresent(etaj -> criteria.and("etaj").is(etaj));
+        ofNullable(filters.floor())
+                .ifPresent(floor -> criteria.and("floor").is(floor));
         ofNullable(filters.tv())
                 .ifPresent(tv -> criteria.and("facilities.tv").is(tv));
         ofNullable(filters.doubleBed())
                 .ifPresent(doubleBed -> criteria.and("facilities.doubleBed").is(doubleBed));
 
         Query query = query(criteria).with(pageable);
-        List<Room> content = mongo.find(query, Room.class);
-        return getPage(content, pageable, () -> mongo.count(query(criteria), Room.class));
+        List<Room> content = mongoTemplate.find(query, Room.class);
+        return getPage(content, pageable, () -> mongoTemplate.count(query(criteria), Room.class));
     }
 }

@@ -10,7 +10,7 @@ public record Room(
         @Id
         String id,
         String number,
-        int etaj,
+        int floor,
         String hotelName,
         RoomFacilities facilities
 ) {
